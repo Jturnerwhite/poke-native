@@ -1,6 +1,6 @@
 import { Accelerometer, Gyroscope } from "expo-sensors";
-import { useEffect } from "react";
-import { Platform, useWindowDimensions } from "react-native";
+import { useEffect, useState } from "react";
+import { AppState, type AppStateStatus, Platform, useWindowDimensions } from "react-native";
 import { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
 
 const TILT_MAX = 12;
@@ -12,6 +12,17 @@ export function useCardParallax() {
 	const rotateY = useSharedValue(0);
 	const rollTilt = useSharedValue(0);
 	const yawSpin = useSharedValue(0);
+
+	const [appActive, setAppActive] = useState(() => AppState.currentState === "active");
+
+	useEffect(() => {
+		if (Platform.OS === "web") return;
+		const onChange = (state: AppStateStatus) => {
+			setAppActive(state === "active");
+		};
+		const sub = AppState.addEventListener("change", onChange);
+		return () => sub.remove();
+	}, []);
 
 	useEffect(() => {
 		if (Platform.OS !== "web") return;
@@ -28,7 +39,7 @@ export function useCardParallax() {
 	}, [winWidth, winHeight]);
 
 	useEffect(() => {
-		if (Platform.OS === "web") return;
+		if (Platform.OS === "web" || !appActive) return;
 		let accelSub: { remove: () => void } | undefined;
 		let gyroSub: { remove: () => void } | undefined;
 		let cancelled = false;
@@ -71,7 +82,7 @@ export function useCardParallax() {
 			accelSub?.remove();
 			gyroSub?.remove();
 		};
-	}, []);
+	}, [appActive]);
 
 	const isWeb = Platform.OS === "web";
 	const cardAnimatedStyle = useAnimatedStyle(() => {

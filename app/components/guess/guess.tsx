@@ -1,8 +1,9 @@
 import type { PokemonCardData } from "@/app/lib/marshalPokemonCardData";
 import { computeNameClosenessScore, normalizeNameForScore } from "@/app/lib/nameGuessScore";
+import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
-import { useState } from 'react';
-import { Image, Pressable, Text, TextInput, View } from "react-native";
+import { useState } from "react";
+import { Image, Platform, Pressable, Text, TextInput, View } from "react-native";
 import Animated, { FadeIn } from "react-native-reanimated";
 import { ParallaxCard } from "../parallax";
 import TypeIcon from "../typeIcon/typeIcon";
@@ -20,18 +21,30 @@ const Guess:React.FC<GuessProps> = ({ pokemon, isHistorical }) => {
 	const [hintsUsed, setHintsUsed] = useState(0);
 	const [nameCloseness, setNameCloseness] = useState<number | null>(null);
 
-	function requestHint():void {
-		console.log("Hint requested");
+	function requestHint(): void {
+		if (Platform.OS !== "web") {
+			void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+		}
 		setHintCount((c) => c + 1);
 	}
 
-	function submitGuess():void {
+	function submitGuess(): void {
+		if (Platform.OS !== "web") {
+			void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+		}
 		setHintsUsed(hintCount);
 		setHintCount(99);
 		const correct =
 			normalizeNameForScore(nameGuess) === normalizeNameForScore(pokemon.pokemonName);
 		setOutcome(correct);
-		if(!correct) {
+		if (Platform.OS !== "web") {
+			void Haptics.notificationAsync(
+				correct
+					? Haptics.NotificationFeedbackType.Success
+					: Haptics.NotificationFeedbackType.Error,
+			);
+		}
+		if (!correct) {
 			setNameCloseness(computeNameClosenessScore(nameGuess, pokemon.pokemonName));
 		}
 	}
