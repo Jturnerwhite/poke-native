@@ -111,17 +111,19 @@ const Guess:React.FC<GuessProps> = ({ pokemon, isHistorical }) => {
 						)}
 					</View>
 				)}
-				{/* Middle: illustration area */}
-				<View style={styles.imageWrapper}>
-					{pokemon.officialArtworkUrl ? (
-						<Image 
-							source={{ uri: pokemon.officialArtworkUrl }} 
-							style={styles.image}
-							tintColor={!(isHistorical || outcome !== null) ? "black" : undefined} 
-						/>
-					) : null}
+				{/* Middle: illustration (flex grows so footer buttons stay at card bottom) */}
+				<View style={styles.cardMain}>
+					<View style={styles.imageWrapper}>
+						{pokemon.officialArtworkUrl ? (
+							<Image
+								source={{ uri: pokemon.officialArtworkUrl }}
+								style={styles.image}
+								tintColor={!(isHistorical || hintCount > 3 || outcome !== null) ? "black" : undefined}
+							/>
+						) : null}
+					</View>
 				</View>
-				{/* Bottom: attack row (Guess button) */}
+				{/* Bottom: hints + buttons (fixed to bottom of card) */}
 				{!isHistorical && (
 					<View style={styles.attackRow}>
 						{hintCount > 0 && (
@@ -140,7 +142,7 @@ const Guess:React.FC<GuessProps> = ({ pokemon, isHistorical }) => {
 								</Text>
 							</View>
 						)}
-						{hintCount < 3 && (
+						{hintCount < 4 && (
 							<Pressable style={styles.hintButton} onPress={requestHint}>
 								<Text style={styles.hintButtonText}>Hint</Text>
 							</Pressable>
@@ -173,7 +175,7 @@ const Guess:React.FC<GuessProps> = ({ pokemon, isHistorical }) => {
 					>
 						{outcome ? "Correct!" : "Incorrect"}
 					</Text>
-					{!outcome && nameCloseness !== null && (
+					{!outcome && (
 						<>
 						<Text style={styles.outcomeScore}>Hints Used: {hintsUsed}</Text>
 						<Text style={styles.outcomeScore}>Name Closeness: {nameCloseness}%</Text>

@@ -70,6 +70,12 @@ const styles = StyleSheet.create({
 		shadowRadius: 8,
 		elevation: 6,
 		overflow: "hidden",
+		flexDirection: "column",
+	},
+	/** Fills space between header and footer so Hint/Guess stay at the card bottom. */
+	cardMain: {
+		flex: 1,
+		minHeight: 0,
 	},
 	cardWater: {
 		backgroundColor: "#52c3f0"
@@ -139,7 +145,8 @@ const styles = StyleSheet.create({
 		flexShrink: 0,
 	},
 	imageWrapper: {
-		height: 168,
+		flex: 1,
+		minHeight: 168,
 		backgroundColor: "#fdf8e4",
 		borderRadius: 8,
 		borderWidth: 2,
@@ -155,6 +162,7 @@ const styles = StyleSheet.create({
 		resizeMode: "contain",
 	},
 	attackRow: {
+		flexShrink: 0,
 		paddingVertical: 10,
 		paddingHorizontal: 6,
 		borderTopWidth: 1,
@@ -164,8 +172,8 @@ const styles = StyleSheet.create({
 		flexDirection: "row",
 		alignItems: "center",
 		justifyContent: "space-between",
-		paddingVertical: 4,
-		paddingHorizontal: 6,
+		paddingVertical: 2,
+		paddingHorizontal: 4,
 		backgroundColor: "rgba(255,255,255,0.6)",
 		borderRadius: 8,
 		borderWidth: 1,
@@ -174,7 +182,7 @@ const styles = StyleSheet.create({
 	},
 	hintLabel: {
 		color: "#374151",
-		fontSize: 14,
+		fontSize: 12,
 		fontWeight: "700",
 		letterSpacing: 0.4,
 		textTransform: "uppercase",
@@ -182,7 +190,7 @@ const styles = StyleSheet.create({
 	},
 	hintValue: {
 		color: "#111827",
-		fontSize: 14,
+		fontSize: 12,
 		fontWeight: "600",
 		flexShrink: 1,
 		textAlign: "right",
