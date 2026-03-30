@@ -5,6 +5,7 @@ export type PokemonCardData = {
 	speciesId: number;
 	speciesName: string;
 	pokemonId: number;
+	/** Display name: hyphens → spaces, title case (from API slug). */
 	pokemonName: string;
 	height: number;
 	weight: number;
@@ -51,6 +52,20 @@ function toPokemonTypeName(name: string | undefined | null): PokemonTypeName {
 
 function formatAbilityName(apiName: string): string {
 	return apiName.replaceAll("-", " ");
+}
+
+/** API slug → readable label: hyphens to spaces, title case each word. */
+function formatPokemonDisplayName(apiName: string): string {
+	return apiName
+		.replaceAll("-", " ")
+		.split(" ")
+		.filter(Boolean)
+		.map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+		.join(" ");
+}
+
+function formatGenerationName(apiName: string): string {
+	return apiName.split("-")[1] ?? apiName;
 }
 
 function extractOfficialArtworkUrl(pokemonNode: Record<string, unknown>): string | null {
@@ -114,7 +129,7 @@ export function marshalPokemonCardData(raw: unknown): PokemonCardData | null {
 	const abilityNames: string[] = abilityNodes
 		.map((n) => {
 			const name = (n as { ability?: { name?: string } })?.ability?.name;
-			return typeof name === "string" ? name : null;
+			return typeof name === "string" ? formatPokemonDisplayName(name) : null;
 		})
 		.filter((n): n is string => n != null);
 
@@ -135,7 +150,7 @@ export function marshalPokemonCardData(raw: unknown): PokemonCardData | null {
 		speciesId,
 		speciesName,
 		pokemonId,
-		pokemonName,
+		pokemonName: formatPokemonDisplayName(pokemonName),
 		height,
 		weight,
 		officialArtworkUrl: extractOfficialArtworkUrl(pokemon),
@@ -147,7 +162,7 @@ export function marshalPokemonCardData(raw: unknown): PokemonCardData | null {
 		flavorTextEnFirered,
 		isLegendary: Boolean(species.is_legendary),
 		isMythical: Boolean(species.is_mythical),
-		generationName: typeof gen?.name === "string" ? gen.name : null,
+		generationName: typeof gen?.name === "string" ? formatGenerationName(gen.name) : null,
 		habitatName: typeof habitat?.name === "string" ? habitat.name : null,
 	};
 }

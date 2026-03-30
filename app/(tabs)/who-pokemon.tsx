@@ -1,5 +1,5 @@
-import { Guess } from "@/components/";
 import { marshalPokemonCardData } from "@/app/lib/marshalPokemonCardData";
+import Guess from "@/components/guess/guess";
 import { pokeDetails } from "@/queries/basicDetails";
 import { useQuery } from "@apollo/client/react";
 import { Text } from "react-native";

@@ -1,5 +1,5 @@
-import { StyleSheet } from "react-native";
 import type { PokemonTypeName } from "@/types/pokemonTypes";
+import { StyleSheet } from "react-native";
 
 export type { PokemonTypeName };
 
@@ -121,6 +121,17 @@ const styles = StyleSheet.create({
 		flexShrink: 1,
 		minWidth: 0,
 	},
+	/** Read-only “input” look when the answer is revealed after guessing. */
+	nameRevealCorrect: {
+		backgroundColor: "rgba(240, 253, 244, 0.95)",
+		borderColor: "#22c55e",
+		color: "#14532d",
+	},
+	nameRevealWrong: {
+		backgroundColor: "rgba(254, 242, 242, 0.95)",
+		borderColor: "#f87171",
+		color: "#7f1d1d",
+	},
 	typeIconsRow: {
 		flexDirection: "row",
 		alignItems: "center",
@@ -149,27 +160,27 @@ const styles = StyleSheet.create({
 		borderTopWidth: 1,
 		borderTopColor: "rgba(0,0,0,0.08)",
 	},
-	abilityRow: {
+	hintRow: {
 		flexDirection: "row",
 		alignItems: "center",
 		justifyContent: "space-between",
-		paddingVertical: 6,
-		paddingHorizontal: 10,
+		paddingVertical: 4,
+		paddingHorizontal: 6,
 		backgroundColor: "rgba(255,255,255,0.6)",
 		borderRadius: 8,
 		borderWidth: 1,
 		borderColor: "rgba(0,0,0,0.12)",
-		marginBottom: 10,
+		marginBottom: 8,
 	},
-	abilityLabel: {
+	hintLabel: {
 		color: "#374151",
-		fontSize: 12,
+		fontSize: 14,
 		fontWeight: "700",
 		letterSpacing: 0.4,
 		textTransform: "uppercase",
 		marginRight: 10,
 	},
-	abilityValue: {
+	hintValue: {
 		color: "#111827",
 		fontSize: 14,
 		fontWeight: "600",
@@ -202,6 +213,51 @@ const styles = StyleSheet.create({
 		color: "#ffffff",
 		fontWeight: "bold",
 		fontSize: 16,
+	},
+	outcomeBlock: {
+		width: 300,
+		maxWidth: "100%",
+		marginTop: 20,
+		paddingVertical: 14,
+		paddingHorizontal: 16,
+		borderRadius: 12,
+		backgroundColor: "rgba(15, 23, 42, 0.72)",
+		borderWidth: 1,
+		borderColor: "rgba(148, 163, 184, 0.35)",
+	},
+	outcomeGuessRow: {
+		marginBottom: 10,
+	},
+	outcomeLabel: {
+		fontSize: 11,
+		fontWeight: "700",
+		letterSpacing: 1.2,
+		textTransform: "uppercase",
+		color: "#94a3b8",
+		marginBottom: 4,
+	},
+	outcomeGuessText: {
+		fontSize: 17,
+		fontWeight: "700",
+		color: "#f8fafc",
+		letterSpacing: 0.3,
+	},
+	outcomeVerdict: {
+		fontSize: 15,
+		fontWeight: "800",
+		letterSpacing: 0.5,
+	},
+	outcomeVerdictCorrect: {
+		color: "#4ade80",
+		textShadowColor: "rgba(74, 222, 128, 0.45)",
+		textShadowOffset: { width: 0, height: 0 },
+		textShadowRadius: 12,
+	},
+	outcomeVerdictWrong: {
+		color: "#fb7185",
+		textShadowColor: "rgba(251, 113, 133, 0.4)",
+		textShadowOffset: { width: 0, height: 0 },
+		textShadowRadius: 10,
 	},
 });
 

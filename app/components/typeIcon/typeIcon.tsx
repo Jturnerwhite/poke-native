@@ -4,24 +4,24 @@ import { View } from "react-native";
 import type { SvgProps } from "react-native-svg";
 import styles from "./typeIcon.style";
 
-import BugImport from "../../resources/bug.svg";
-import DarkImport from "../../resources/dark.svg";
-import DragonImport from "../../resources/dragon.svg";
-import ElectricImport from "../../resources/electric.svg";
-import FairyImport from "../../resources/fairy.svg";
-import FightingImport from "../../resources/fighting.svg";
-import FireImport from "../../resources/fire.svg";
-import FlyingImport from "../../resources/flying.svg";
-import GhostImport from "../../resources/ghost.svg";
-import GrassImport from "../../resources/grass.svg";
-import GroundImport from "../../resources/ground.svg";
-import IceImport from "../../resources/ice.svg";
-import NormalImport from "../../resources/normal.svg";
-import PoisonImport from "../../resources/poison.svg";
-import PsychicImport from "../../resources/psychic.svg";
-import RockImport from "../../resources/rock.svg";
-import SteelImport from "../../resources/steel.svg";
-import WaterImport from "../../resources/water.svg";
+import BugImport from "../../resources/pokeTypes/bug.svg";
+import DarkImport from "../../resources/pokeTypes/dark.svg";
+import DragonImport from "../../resources/pokeTypes/dragon.svg";
+import ElectricImport from "../../resources/pokeTypes/electric.svg";
+import FairyImport from "../../resources/pokeTypes/fairy.svg";
+import FightingImport from "../../resources/pokeTypes/fighting.svg";
+import FireImport from "../../resources/pokeTypes/fire.svg";
+import FlyingImport from "../../resources/pokeTypes/flying.svg";
+import GhostImport from "../../resources/pokeTypes/ghost.svg";
+import GrassImport from "../../resources/pokeTypes/grass.svg";
+import GroundImport from "../../resources/pokeTypes/ground.svg";
+import IceImport from "../../resources/pokeTypes/ice.svg";
+import NormalImport from "../../resources/pokeTypes/normal.svg";
+import PoisonImport from "../../resources/pokeTypes/poison.svg";
+import PsychicImport from "../../resources/pokeTypes/psychic.svg";
+import RockImport from "../../resources/pokeTypes/rock.svg";
+import SteelImport from "../../resources/pokeTypes/steel.svg";
+import WaterImport from "../../resources/pokeTypes/water.svg";
 
 /** Metro/SVGR may expose the component as default or as `{ default: fn }`. */
 function asSvgComponent(m: unknown): FC<SvgProps> {

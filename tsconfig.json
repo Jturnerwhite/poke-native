@@ -6,8 +6,11 @@
       "@/*": [
         "./*"
       ], 
+      "@/components": [
+        "./app/components/index.tsx"
+      ],
       "@/components/*": [
-        "./app/components/index.ts"
+        "./app/components/*"
       ],
       "@/queries/*": [
         "./app/queries/*"

@@ -9,7 +9,10 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSMotionUsageDescription": "Motion is used to tilt the Pokémon card when you move your device."
+      }
     },
     "android": {
       "adaptiveIcon": {

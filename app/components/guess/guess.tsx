@@ -1,61 +1,21 @@
-import { LinearGradient } from "expo-linear-gradient";
-import { Accelerometer } from "expo-sensors";
-import { useEffect, useState } from 'react';
-import { Image, Platform, Pressable, Text, TextInput, useWindowDimensions, View } from "react-native";
-import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
 import type { PokemonCardData } from "@/app/lib/marshalPokemonCardData";
+import { LinearGradient } from "expo-linear-gradient";
+import { useState } from 'react';
+import { Image, Pressable, Text, TextInput, View } from "react-native";
+import Animated, { FadeIn } from "react-native-reanimated";
+import { ParallaxCard } from "../parallax";
 import TypeIcon from "../typeIcon/typeIcon";
-import styles, { typeLowerHalfGradients, type PokemonTypeName } from "./guess.style";
+import styles, { typeLowerHalfGradients } from "./guess.style";
 
 interface GuessProps {
 	pokemon: PokemonCardData;
 	isHistorical: boolean;
 }
 
-const TILT_MAX = 12;
-const CURSOR_SENSITIVITY = 0.5;
-
 const Guess:React.FC<GuessProps> = ({ pokemon, isHistorical }) => {
 	const [hintCount, setHintCount] = useState(0);
 	const [nameGuess, setNameGuess] = useState('');
-	const { width: winWidth, height: winHeight } = useWindowDimensions();
-	const rotateX = useSharedValue(0);
-	const rotateY = useSharedValue(0);
-	// Web: parallax from cursor position
-	useEffect(() => {
-		if (Platform.OS !== "web") return;
-		const handleMouseMove = (e: { clientX: number; clientY: number }) => {
-			const nx = (e.clientX / winWidth - 0.5) * 2;
-			const ny = (e.clientY / winHeight - 0.5) * 2;
-			rotateY.value = withSpring(nx * TILT_MAX * CURSOR_SENSITIVITY, { damping: 25, stiffness: 200 });
-			rotateX.value = withSpring(-ny * TILT_MAX * CURSOR_SENSITIVITY, { damping: 25, stiffness: 200 });
-		};
-		if (typeof window !== "undefined") {
-			window.addEventListener("mousemove", handleMouseMove);
-			return () => window.removeEventListener("mousemove", handleMouseMove);
-		}
-	}, [winWidth, winHeight]);
-
-	// Native: parallax from accelerometer
-	useEffect(() => {
-		if (Platform.OS === "web") return;
-		Accelerometer.setUpdateInterval(50);
-		const sub = Accelerometer.addListener((data) => {
-			// Mobile: left-right parallax only (rotateY from device tilt)
-			const tiltY = Math.max(-TILT_MAX, Math.min(TILT_MAX, -data.x * 18));
-			rotateX.value = withSpring(0, { damping: 28, stiffness: 90 });
-			rotateY.value = withSpring(tiltY, { damping: 28, stiffness: 90 });
-		});
-		return () => sub.remove();
-	}, []);
-
-	const cardAnimatedStyle = useAnimatedStyle(() => ({
-		transform: [
-			{ perspective: 1200 },
-			{ rotateX: `${rotateX.value}deg` },
-			{ rotateY: `${rotateY.value}deg` },
-		],
-	}));
+	const [outcome, setOutcome] = useState<boolean | null>(null);
 
 	function requestHint():void {
 		console.log("Hint requested");
@@ -64,6 +24,8 @@ const Guess:React.FC<GuessProps> = ({ pokemon, isHistorical }) => {
 
 	function submitGuess():void {
 		console.log(nameGuess);
+		setHintCount(99);
+		setOutcome(nameGuess.toLowerCase() === pokemon.pokemonName.toLowerCase());
 	}
 
 	const abilityName = pokemon.firstAbilityDisplay ?? undefined;
@@ -98,9 +60,8 @@ const Guess:React.FC<GuessProps> = ({ pokemon, isHistorical }) => {
 
 	return (
 		<View style={styles.screen}>
-			<Animated.View style={[styles.card, hintCount > 0 ? hintedCardStyle : null, cardAnimatedStyle]}>
-				{/* Type gradient for lower-half of the card (only after first hint) */}
-				{hintCount > 0 && (
+			<ParallaxCard style={[styles.card, hintCount > 2 ? hintedCardStyle : null]}>
+				{hintCount > 2 && (
 					<LinearGradient
 						colors={lowerGradient.colors}
 						start={{ x: 0.5, y: 0 }}
@@ -112,15 +73,27 @@ const Guess:React.FC<GuessProps> = ({ pokemon, isHistorical }) => {
 				{/* Top: name row (like TCG header) */}
 				{!isHistorical && (
 					<View style={styles.nameRow}>
-						<TextInput
-							style={styles.nameInput}
-							onChangeText={setNameGuess}
-							value={nameGuess}
-							placeholder="Who's that Pokémon?"
-							placeholderTextColor="#9ca3af"
-							keyboardType="default"
-						/>
-						{hintCount > 0 && (
+						{outcome !== null ? (
+							<Text
+								style={[
+									styles.nameInput,
+									outcome ? styles.nameRevealCorrect : styles.nameRevealWrong,
+								]}
+								numberOfLines={2}
+							>
+								{pokemon.pokemonName}
+							</Text>
+						) : (
+							<TextInput
+								style={styles.nameInput}
+								onChangeText={setNameGuess}
+								value={nameGuess}
+								placeholder="Who's that Pokémon?"
+								placeholderTextColor="#9ca3af"
+								keyboardType="default"
+							/>
+						)}
+						{hintCount > 2 && (
 							<View style={styles.typeIconsRow}>
 								<TypeIcon type={primaryType} />
 								{secondaryType && secondaryType !== primaryType && (
@@ -136,30 +109,64 @@ const Guess:React.FC<GuessProps> = ({ pokemon, isHistorical }) => {
 						<Image 
 							source={{ uri: pokemon.officialArtworkUrl }} 
 							style={styles.image}
-							tintColor={!isHistorical ? "black" : undefined} 
+							tintColor={!(isHistorical || outcome !== null) ? "black" : undefined} 
 						/>
 					) : null}
 				</View>
 				{/* Bottom: attack row (Guess button) */}
 				{!isHistorical && (
 					<View style={styles.attackRow}>
-						{hintCount > 1 && (
-							<View style={styles.abilityRow}>
-								<Text style={styles.abilityLabel}>Ability</Text>
-								<Text style={styles.abilityValue} numberOfLines={1}>
+						{hintCount > 0 && (
+							<View style={styles.hintRow}>
+								<Text style={styles.hintLabel}>Ability</Text>
+								<Text style={styles.hintValue} numberOfLines={1}>
 									{abilityName ?? "—"}
 								</Text>
 							</View>
 						)}
-						<Pressable style={styles.hintButton} onPress={requestHint}>
-							<Text style={styles.hintButtonText}>Hint</Text>
-						</Pressable>
-						<Pressable style={styles.guessButton} onPress={submitGuess}>
-							<Text style={styles.guessButtonText}>Guess</Text>
-						</Pressable>
+						{hintCount > 1 && (
+							<View style={styles.hintRow}>
+								<Text style={styles.hintLabel}>Generation</Text>
+								<Text style={styles.hintValue} numberOfLines={1}>
+									{pokemon.generationName ?? "—"}
+								</Text>
+							</View>
+						)}
+						{hintCount < 3 && (
+							<Pressable style={styles.hintButton} onPress={requestHint}>
+								<Text style={styles.hintButtonText}>Hint</Text>
+							</Pressable>
+						)}
+						{outcome === null && (
+							<Pressable style={styles.guessButton} onPress={submitGuess}>
+								<Text style={styles.guessButtonText}>Guess</Text>
+							</Pressable>
+						)}
 					</View>
 				)}
-			</Animated.View>
+			</ParallaxCard>
+			{outcome !== null && (
+				<Animated.View
+					key={`${outcome}-${nameGuess}`}
+					entering={FadeIn.duration(420).delay(40)}
+					style={styles.outcomeBlock}
+				>
+					<View style={styles.outcomeGuessRow}>
+						<Text style={styles.outcomeLabel}>Your guess</Text>
+						<Text style={styles.outcomeGuessText} numberOfLines={2}>
+							{nameGuess.trim() ? nameGuess : "—"}
+						</Text>
+					</View>
+					<Text
+						style={[
+							styles.outcomeVerdict,
+							outcome ? styles.outcomeVerdictCorrect : styles.outcomeVerdictWrong,
+						]}
+					>
+						{outcome ? "Correct!" : "Incorrect"}
+					</Text>
+				</Animated.View>
+			)}
 		</View>
 	);
 }
