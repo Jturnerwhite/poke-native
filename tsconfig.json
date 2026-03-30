@@ -5,11 +5,21 @@
     "paths": {
       "@/*": [
         "./*"
+      ], 
+      "@/components/*": [
+        "./app/components/index.ts"
+      ],
+      "@/queries/*": [
+        "./app/queries/*"
+      ],
+      "@/types/*": [
+        "./app/types/*"
       ]
     }
   },
   "include": [
     "**/*.ts",
-    "**/*.tsx"
+    "**/*.tsx",
+    "**/*.d.ts"
   ]
 }

@@ -1,6 +1,9 @@
-const pokeDetails:string = `
-query pokemon_details {
-  species: pokemonspecies(where: {name: {_eq: "trapinch"}}) {
+import { gql } from "@apollo/client";
+
+const pokeDetails = gql`
+query pokemon_details($id: Int!) {
+  species: pokemonspecies(where: {id: {_eq: $id}}) {
+	id
 	name
 	base_happiness
 	is_legendary
