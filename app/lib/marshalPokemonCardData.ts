@@ -65,7 +65,19 @@ function formatPokemonDisplayName(apiName: string): string {
 }
 
 function formatGenerationName(apiName: string): string {
-	return apiName.split("-")[1] ?? apiName;
+	let number = apiName.split("-")[1] ?? apiName; // Roman numerals
+	switch(number) {
+		case "i": return "1 (Kanto)";
+		case "ii": return "2 (Johto)";
+		case "iii": return "3 (Hoenn)";
+		case "iv": return "4 (Sinnoh)";
+		case "v": return "5 (Unova)";
+		case "vi": return "6 (Kalos)";
+		case "vii": return "7 (Alola)";
+		case "viii": return "8 (Galar)";
+		case "ix": return "9 (Paldea)";
+		default: return number + " (Unknown)";
+	}
 }
 
 function extractOfficialArtworkUrl(pokemonNode: Record<string, unknown>): string | null {

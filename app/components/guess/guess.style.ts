@@ -259,6 +259,13 @@ const styles = StyleSheet.create({
 		textShadowOffset: { width: 0, height: 0 },
 		textShadowRadius: 10,
 	},
+	outcomeScore: {
+		marginTop: 10,
+		fontSize: 13,
+		fontWeight: "600",
+		color: "#cbd5e1",
+		letterSpacing: 0.3,
+	},
 });
 
 export default styles;

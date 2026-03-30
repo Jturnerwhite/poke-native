@@ -1,4 +1,5 @@
 import type { PokemonCardData } from "@/app/lib/marshalPokemonCardData";
+import { computeNameClosenessScore, normalizeNameForScore } from "@/app/lib/nameGuessScore";
 import { LinearGradient } from "expo-linear-gradient";
 import { useState } from 'react';
 import { Image, Pressable, Text, TextInput, View } from "react-native";
@@ -16,6 +17,8 @@ const Guess:React.FC<GuessProps> = ({ pokemon, isHistorical }) => {
 	const [hintCount, setHintCount] = useState(0);
 	const [nameGuess, setNameGuess] = useState('');
 	const [outcome, setOutcome] = useState<boolean | null>(null);
+	const [hintsUsed, setHintsUsed] = useState(0);
+	const [nameCloseness, setNameCloseness] = useState<number | null>(null);
 
 	function requestHint():void {
 		console.log("Hint requested");
@@ -23,9 +26,14 @@ const Guess:React.FC<GuessProps> = ({ pokemon, isHistorical }) => {
 	}
 
 	function submitGuess():void {
-		console.log(nameGuess);
+		setHintsUsed(hintCount);
 		setHintCount(99);
-		setOutcome(nameGuess.toLowerCase() === pokemon.pokemonName.toLowerCase());
+		const correct =
+			normalizeNameForScore(nameGuess) === normalizeNameForScore(pokemon.pokemonName);
+		setOutcome(correct);
+		if(!correct) {
+			setNameCloseness(computeNameClosenessScore(nameGuess, pokemon.pokemonName));
+		}
 	}
 
 	const abilityName = pokemon.firstAbilityDisplay ?? undefined;
@@ -165,6 +173,12 @@ const Guess:React.FC<GuessProps> = ({ pokemon, isHistorical }) => {
 					>
 						{outcome ? "Correct!" : "Incorrect"}
 					</Text>
+					{!outcome && nameCloseness !== null && (
+						<>
+						<Text style={styles.outcomeScore}>Hints Used: {hintsUsed}</Text>
+						<Text style={styles.outcomeScore}>Name Closeness: {nameCloseness}%</Text>
+						</>
+					)}
 				</Animated.View>
 			)}
 		</View>
